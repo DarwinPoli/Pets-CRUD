@@ -1,0 +1,15 @@
+# Environment variables (contains database passwords)
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+
+# SQLite (no longer used)
+*.db
