@@ -1,4 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom'
+import { getApiMode, toggleApiMode } from '../api/graphqlClient'
 
 const links = [
   { to: '/', label: 'Inicio' },
@@ -23,7 +24,12 @@ export function AppLayout() {
               </p>
               <h1 className="text-2xl font-extrabold text-slate-900 md:text-3xl">PETS S.A.</h1>
             </div>
-
+            <button
+              onClick={toggleApiMode}
+              className="rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-200"
+            >
+              Modo API: {getApiMode()}
+            </button>
           </div>
           <nav className="flex flex-wrap gap-2 rounded-2xl border border-slate-200/70 bg-white/70 p-2 shadow-sm">
             {links.map((link) => (
