@@ -1,5 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from strawberry.fastapi import GraphQLRouter
+
+from app.graphql.schema import schema
 
 from app.database import engine, Base
 from app.routes import cliente, medicamento, mascota, reportes
@@ -36,6 +39,10 @@ app.include_router(cliente.router)
 app.include_router(medicamento.router)
 app.include_router(mascota.router)
 app.include_router(reportes.router)
+
+# Registrar endpoint GraphQL con playground integrado
+graphql_app = GraphQLRouter(schema)
+app.include_router(graphql_app, prefix="/graphql")
 
 
 @app.get("/", tags=["Root"])
