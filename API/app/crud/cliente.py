@@ -11,6 +11,11 @@ def get_client(db: Session, client_id: int):
     """
     return db.query(Client).filter(Client.id == client_id).first()
 
+def get_client_by_id_number(db: Session, id_number: str):
+    """
+    Busca un cliente por su número de identificación (cédula).
+    """
+    return db.query(Client).filter(Client.id_number == id_number).first()
 
 def get_client_by_id_number(db: Session, id_number: str):
     """

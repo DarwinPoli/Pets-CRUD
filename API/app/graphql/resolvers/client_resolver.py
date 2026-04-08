@@ -42,6 +42,16 @@ def resolve_client(client_id: int) -> Optional[ClientType]:
     finally:
         db.close()
 
+def resolve_client_by_id_number(id_number: str) -> Optional[ClientType]:
+    """Obtiene un cliente por número de identificación. Reutiliza crud_client.get_client_by_id_number()."""
+    db = SessionLocal()
+    try:
+        client = crud_client.get_client_by_id_number(db, id_number)
+        if not client:
+            return None
+        return _to_client_type(client)
+    finally:
+        db.close()
 
 # ─── Mutations ───────────────────────────────────────────────────────────────
 

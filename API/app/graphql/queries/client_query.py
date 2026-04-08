@@ -2,7 +2,7 @@ import strawberry
 from typing import Optional, List
 
 from app.graphql.types.client_type import ClientType
-from app.graphql.resolvers.client_resolver import resolve_clients, resolve_client
+from app.graphql.resolvers.client_resolver import resolve_client_by_id_number, resolve_clients, resolve_client
 
 
 @strawberry.type
@@ -16,3 +16,7 @@ class ClientQuery:
     @strawberry.field(description="Obtener un cliente específico por su ID.")
     def client(self, client_id: int) -> Optional[ClientType]:
         return resolve_client(client_id)
+    
+    @strawberry.field(description="Obtener un cliente por su número de identificación (cédula).")
+    def client_by_id_number(self, id_number: str) -> Optional[ClientType]:
+        return resolve_client_by_id_number(id_number)
