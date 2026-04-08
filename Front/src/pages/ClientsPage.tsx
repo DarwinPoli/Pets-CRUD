@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useAppData } from '../context/AppDataContext'
+import { useNotification } from '../context/NotificationContext'
 
 interface ClientForm {
   cedula: string
@@ -19,6 +20,7 @@ const emptyForm: ClientForm = {
 
 export function ClientsPage() {
   const { clients, addClient, updateClient, removeClient } = useAppData()
+  const { showNotification } = useNotification()
   const [form, setForm] = useState<ClientForm>(emptyForm)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -31,14 +33,16 @@ export function ClientsPage() {
       if (editingId) {
         await updateClient(editingId, form)
         setEditingId(null)
+        showNotification('Cliente actualizado correctamente.', 'success')
       } else {
         await addClient(form)
+        showNotification('Cliente creado correctamente.', 'success')
       }
 
       setForm(emptyForm)
     } catch (error) {
       console.error('Error guardando cliente', error)
-      alert('No se pudo guardar el cliente. Verifica que la API este disponible.')
+      showNotification('No se pudo guardar el cliente. Verifica que la API este disponible.', 'error')
     } finally {
       setIsSubmitting(false)
     }
@@ -64,11 +68,14 @@ export function ClientsPage() {
     try {
       const deleted = await removeClient(id)
       if (!deleted) {
-        alert('No se puede eliminar el cliente porque tiene mascotas asociadas.')
+        showNotification('No se puede eliminar el cliente porque tiene mascotas asociadas.', 'warning')
+        return
       }
+
+      showNotification('Cliente eliminado correctamente.', 'success')
     } catch (error) {
       console.error('Error eliminando cliente', error)
-      alert('No se pudo eliminar el cliente. Verifica que la API este disponible.')
+      showNotification('No se pudo eliminar el cliente. Verifica que la API este disponible.', 'error')
     }
   }
 

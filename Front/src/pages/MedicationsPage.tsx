@@ -1,20 +1,22 @@
 import { useState } from 'react'
 import { useAppData } from '../context/AppDataContext'
+import { useNotification } from '../context/NotificationContext'
 
 interface MedicationForm {
-  nombre: string
-  descripcion: string
-  dosis: string
+  name: string
+  description: string
+  dosage: string
 }
 
 const emptyForm: MedicationForm = {
-  nombre: '',
-  descripcion: '',
-  dosis: '',
+  name: '',
+  description: '',
+  dosage: '',
 }
 
 export function MedicationsPage() {
   const { medications, addMedication, updateMedication, removeMedication } = useAppData()
+  const { showNotification } = useNotification()
   const [form, setForm] = useState<MedicationForm>(emptyForm)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -28,14 +30,16 @@ export function MedicationsPage() {
       if (editingId) {
         await updateMedication(editingId, form)
         setEditingId(null)
+        showNotification('Medicamento actualizado correctamente.', 'success')
       } else {
         await addMedication(form)
+        showNotification('Medicamento creado correctamente.', 'success')
       }
 
       setForm(emptyForm)
     } catch (error) {
       console.error('Error guardando medicamento', error)
-      alert('No se pudo guardar el medicamento. Verifica que la API este disponible.')
+      showNotification('No se pudo guardar el medicamento. Verifica que la API este disponible.', 'error')
     } finally {
       setIsSubmitting(false)
     }
@@ -49,9 +53,9 @@ export function MedicationsPage() {
 
     setEditingId(id)
     setForm({
-      nombre: medication.nombre,
-      descripcion: medication.descripcion,
-      dosis: medication.dosis,
+      name: medication.name,
+      description: medication.description,
+      dosage: medication.dosage,
     })
   }
 
@@ -59,11 +63,14 @@ export function MedicationsPage() {
     try {
       const deleted = await removeMedication(id)
       if (!deleted) {
-        alert('No se puede eliminar el medicamento porque esta asignado a una mascota.')
+        showNotification('No se puede eliminar el medicamento porque esta asignado a una mascota.', 'warning')
+        return
       }
+
+      showNotification('Medicamento eliminado correctamente.', 'success')
     } catch (error) {
       console.error('Error eliminando medicamento', error)
-      alert('No se pudo eliminar el medicamento. Verifica que la API este disponible.')
+      showNotification('No se pudo eliminar el medicamento. Verifica que la API este disponible.', 'error')
     }
   }
 
@@ -79,24 +86,24 @@ export function MedicationsPage() {
           required
           className="rounded-lg border border-slate-300 px-3 py-2 outline-none ring-emerald-200 focus:ring"
           placeholder="Nombre"
-          value={form.nombre}
-          onChange={(event) => setForm((prev) => ({ ...prev, nombre: event.target.value }))}
+          value={form.name}
+          onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
         />
         <input
           required
           className="rounded-lg border border-slate-300 px-3 py-2 outline-none ring-emerald-200 focus:ring"
           placeholder="Descripcion"
-          value={form.descripcion}
+          value={form.description}
           onChange={(event) =>
-            setForm((prev) => ({ ...prev, descripcion: event.target.value }))
+            setForm((prev) => ({ ...prev, description: event.target.value }))
           }
         />
         <input
           required
           className="rounded-lg border border-slate-300 px-3 py-2 outline-none ring-emerald-200 focus:ring"
           placeholder="Dosis"
-          value={form.dosis}
-          onChange={(event) => setForm((prev) => ({ ...prev, dosis: event.target.value }))}
+          value={form.dosage}
+          onChange={(event) => setForm((prev) => ({ ...prev, dosage: event.target.value }))}
         />
         <div className="flex gap-2">
           <button
@@ -134,9 +141,9 @@ export function MedicationsPage() {
           <tbody>
             {medications.map((medication) => (
               <tr key={medication.id} className="border-t border-slate-200">
-                <td className="px-4 py-3">{medication.nombre}</td>
-                <td className="px-4 py-3">{medication.descripcion}</td>
-                <td className="px-4 py-3">{medication.dosis}</td>
+                <td className="px-4 py-3">{medication.name}</td>
+                <td className="px-4 py-3">{medication.description}</td>
+                <td className="px-4 py-3">{medication.dosage}</td>
                 <td className="px-4 py-3">
                   <div className="flex gap-2">
                     <button

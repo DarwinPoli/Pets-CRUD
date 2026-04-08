@@ -16,7 +16,6 @@ interface BackendMedication {
   name: string
   description: string | null
   dosage?: string | null
-  dose?: string | null
 }
 
 export type MedicationCreatePayload = Omit<Medication, 'id'>
@@ -27,7 +26,7 @@ function toFrontendMedication(medication: BackendMedication): Medication {
     id: String(medication.id),
     name: medication.name,
     description: medication.description ?? '',
-    dosage: medication.dosage ?? medication.dose ?? '',
+    dosage: medication.dosage ??  '',
   }
 }
 
@@ -54,7 +53,6 @@ export async function createMedication(
           name
           description
           dosage
-          dose
         }
       }
     `
@@ -86,7 +84,6 @@ export async function listMedications(skip = 0, limit = 100): Promise<Medication
           name
           description
           dosage
-          dose
         }
       }
     `
@@ -112,7 +109,6 @@ export async function getMedication(medicationId: number | string): Promise<Medi
           name
           description
           dosage
-          dose
         }
       }
     `
@@ -140,7 +136,6 @@ export async function updateMedication(
           name
           description
           dosage
-          dose
         }
       }
     `

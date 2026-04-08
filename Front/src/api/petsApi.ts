@@ -19,6 +19,7 @@ interface BackendPet {
   age: number
   weight: number
   medication_ids?: number[] | null
+  medications?: Array<{ id: number }> | null
   client_id: number
 }
 
@@ -26,6 +27,14 @@ export type PetCreatePayload = Omit<Pet, 'id'>
 export type PetUpdatePayload = Partial<PetCreatePayload>
 
 function toFrontendPet(pet: BackendPet): Pet {
+  const medicationIds = Array.isArray(pet.medication_ids)
+    ? pet.medication_ids
+    : Array.isArray(pet.medications)
+      ? pet.medications
+          .map((item) => item.id)
+          .filter((item) => Number.isFinite(item))
+      : []
+
   return {
     id: String(pet.id),
     identification: pet.identification,
@@ -34,9 +43,7 @@ function toFrontendPet(pet: BackendPet): Pet {
     age: pet.age,
     weight: pet.weight,
     client_id: String(pet.client_id),
-    medication_ids: Array.isArray(pet.medication_ids)
-      ? pet.medication_ids.map(String)
-      : [],
+    medication_ids: medicationIds.map(String),
   }
 }
 
@@ -67,7 +74,9 @@ export async function createPet(payload: PetCreatePayload): Promise<Pet> {
           breed
           age
           weight
-          medication_ids: medicationIds
+          medications {
+            id
+          }
           client_id: clientId
         }
       }
@@ -103,7 +112,9 @@ export async function listPets(skip = 0, limit = 100): Promise<Pet[]> {
           breed
           age
           weight
-          medication_ids: medicationIds
+          medications {
+            id
+          }
           client_id: clientId
         }
       }
@@ -133,7 +144,9 @@ export async function getPet(petId: number | string): Promise<Pet> {
           breed
           age
           weight
-          medication_ids: medicationIds
+          medications {
+            id
+          }
           client_id: clientId
         }
       }
@@ -164,7 +177,9 @@ export async function updatePet(
           breed
           age
           weight
-          medication_ids: medicationIds
+          medications {
+            id
+          }
           client_id: clientId
         }
       }

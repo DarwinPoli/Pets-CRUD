@@ -10,11 +10,13 @@ import {
   type MedicationsByClientReport,
 } from '../api/reportsApi'
 import { useAppData } from '../context/AppDataContext'
+import { useNotification } from '../context/NotificationContext'
 
 type ReportOption = 'clients' | 'medications' | 'pets'
 
 export function ReportsPage() {
   const { clients } = useAppData()
+  const { showNotification } = useNotification()
   const [selectedReport, setSelectedReport] = useState<ReportOption>('clients')
 
   const [clientsReport, setClientsReport] = useState<ClientReport[]>([])
@@ -123,7 +125,7 @@ export function ReportsPage() {
 
     if (selectedReport === 'clients') {
       if (clientsReport.length === 0) {
-        alert('No hay datos de clientes para exportar.')
+        showNotification('No hay datos de clientes para exportar.', 'warning')
         return
       }
 
@@ -170,7 +172,7 @@ export function ReportsPage() {
 
     if (selectedReport === 'medications') {
       if (medicationsReport.length === 0) {
-        alert('No hay datos de medicamentos para exportar.')
+        showNotification('No hay datos de medicamentos para exportar.', 'warning')
         return
       }
 
@@ -203,7 +205,7 @@ export function ReportsPage() {
     }
 
     if (!petsReport) {
-      alert('Selecciona un cliente con datos para exportar.')
+      showNotification('Selecciona un cliente con datos para exportar.', 'warning')
       return
     }
 
